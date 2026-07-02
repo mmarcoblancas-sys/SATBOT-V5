@@ -1,0 +1,14 @@
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+
+# Configuración de Visual Studio Code
+.vscode/
+
+# Entornos virtuales
+.venv/
+venv/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
