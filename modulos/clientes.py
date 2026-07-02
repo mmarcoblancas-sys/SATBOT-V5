@@ -1,35 +1,87 @@
-import os
+from modulos.database import conectar
 
 
-RUTA_CLIENTES = r"C:\SATBOT\clientes.txt"
+class ClienteDAO:
 
+    def obtener_clientes(self):
 
-def obtener_clientes():
+        conexion = conectar()
 
-    clientes = []
+        cursor = conexion.cursor()
 
-    if not os.path.exists(RUTA_CLIENTES):
+        cursor.execute("""
+
+            SELECT
+                id,
+                rfc,
+                nombre
+
+            FROM clientes
+
+            WHERE activo = 1
+
+            ORDER BY nombre
+
+        """)
+
+        clientes = cursor.fetchall()
+
+        conexion.close()
+
         return clientes
 
-    with open(
-        RUTA_CLIENTES,
-        "r",
-        encoding="utf-8"
-    ) as archivo:
+    def buscar(self, texto):
 
-        for linea in archivo:
+        conexion = conectar()
 
-            linea = linea.strip()
+        cursor = conexion.cursor()
 
-            if "|" in linea:
+        cursor.execute("""
 
-                rfc, nombre = linea.split("|", 1)
+            SELECT
+                id,
+                rfc,
+                nombre
 
-                clientes.append(
-                    {
-                        "rfc": rfc,
-                        "nombre": nombre
-                    }
-                )
+            FROM clientes
 
-    return clientes
+            WHERE activo = 1
+
+            AND
+            (
+                nombre LIKE ?
+                OR
+                rfc LIKE ?
+            )
+
+            ORDER BY nombre
+
+        """, (
+
+            f"%{texto}%",
+            f"%{texto}%"
+
+        ))
+
+        clientes = cursor.fetchall()
+
+        conexion.close()
+
+        return clientes
+
+
+# ===============================
+# PRUEBA
+# ===============================
+
+if __name__ == "__main__":
+
+    dao = ClienteDAO()
+
+    clientes = dao.obtener_clientes()
+
+    print("\nCLIENTES")
+    print("----------------------")
+
+    for cliente in clientes:
+        print(cliente)
