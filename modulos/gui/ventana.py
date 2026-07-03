@@ -2,41 +2,38 @@ import customtkinter as ctk
 
 from .encabezado import Encabezado
 from .panel_clientes import PanelClientes
+from .panel_detalle import PanelDetalle
 
 
 class VentanaPrincipal(ctk.CTk):
 
     def __init__(self):
-
         super().__init__()
 
         self.title("SATBOT DESPACHO V5")
-
         self.geometry("1400x800")
-
         self.minsize(1200, 700)
 
+        # -----------------------------
+        # Configuración de la ventana
+        # -----------------------------
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
-        # ==========================
-        # ENCABEZADO
-        # ==========================
-
+        # -----------------------------
+        # Encabezado
+        # -----------------------------
         self.encabezado = Encabezado(self)
-
         self.encabezado.grid(
             row=0,
             column=0,
             sticky="ew"
         )
 
-        # ==========================
-        # CUERPO
-        # ==========================
-
+        # -----------------------------
+        # Cuerpo principal
+        # -----------------------------
         self.cuerpo = ctk.CTkFrame(self)
-
         self.cuerpo.grid(
             row=1,
             column=0,
@@ -49,13 +46,12 @@ class VentanaPrincipal(ctk.CTk):
         self.cuerpo.grid_columnconfigure(1, weight=3)
         self.cuerpo.grid_rowconfigure(0, weight=1)
 
-        # ==========================
-        # PANEL CLIENTES
-        # ==========================
-
+        # -----------------------------
+        # Panel de clientes
+        # -----------------------------
         self.panel_clientes = PanelClientes(
             self.cuerpo,
-            self.mostrar_cliente
+            callback_cliente=self.mostrar_cliente
         )
 
         self.panel_clientes.grid(
@@ -65,11 +61,10 @@ class VentanaPrincipal(ctk.CTk):
             padx=(0, 10)
         )
 
-        # ==========================
-        # PANEL DERECHO
-        # ==========================
-
-        self.panel_detalle = ctk.CTkFrame(self.cuerpo)
+        # -----------------------------
+        # Panel de detalle
+        # -----------------------------
+        self.panel_detalle = PanelDetalle(self.cuerpo)
 
         self.panel_detalle.grid(
             row=0,
@@ -77,24 +72,10 @@ class VentanaPrincipal(ctk.CTk):
             sticky="nsew"
         )
 
-        self.lbl_info = ctk.CTkLabel(
-            self.panel_detalle,
-            text="Seleccione un cliente",
-            font=("Arial", 22, "bold")
-        )
-
-        self.lbl_info.pack(pady=30)
-
-    # ===================================
-
-    # ===================================
+    # =====================================
 
     def mostrar_cliente(self, cliente):
 
-        print("MOSTRAR:", cliente)
+        print("CLIENTE SELECCIONADO:", cliente)
 
-        self.lbl_info.configure(
-            text=f"RFC: {cliente[1]}\n\nNombre: {cliente[2]}"
-        )
-
-        self.update_idletasks()
+        self.panel_detalle.mostrar_cliente(cliente)
